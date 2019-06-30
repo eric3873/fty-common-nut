@@ -1,7 +1,9 @@
 /*  =========================================================================
     fty_common_nut_scan - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C)
+        2014 - 2018 Eaton
+        2019        Arnaud Quette <arnaud.quette@free.fr>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,6 +135,15 @@ int scanDeviceRangeNetXML(
     DeviceConfigurations& out)
 {
     MlmSubprocess::Argv extra = { "--xml_scan" };
+
+    return s_scanDeviceRange(scanOptions, extra, out);
+}
+
+int scanDeviceRangeModbusTCP(
+    const ScanRangeOptions& scanOptions,
+    DeviceConfigurations& out)
+{
+    MlmSubprocess::Argv extra = { "--modbus_tcp_scan" };
 
     return s_scanDeviceRange(scanOptions, extra, out);
 }

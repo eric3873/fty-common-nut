@@ -1,7 +1,9 @@
 /*  =========================================================================
     fty_common_nut_credentials - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C)
+        2014 - 2018 Eaton
+        2019        Arnaud Quette <arnaud.quette@free.fr>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -135,6 +137,22 @@ int dumpDeviceNetXML(
     } ;
 
     return s_dumpDeviceData("/lib/nut/netxml-ups", extra, loop_nb, loop_iter_time, out);
+}
+
+/* Works for both Modbus TCP and RTU */
+// FIXME: how to get slave_id from output?
+int dumpDeviceModbus(
+    const std::string& port,
+    unsigned loop_nb,
+    unsigned loop_iter_time,
+    KeyValues& out)
+{
+    KeyValues extra = {
+        { "port", port },
+        { "slave_id", "auto" /* FIXME: slave_id */ }
+    } ;
+
+    return s_dumpDeviceData("/lib/nut/nutdrv_modbus", extra, loop_nb, loop_iter_time, out);
 }
 
 int dumpDeviceDummy(

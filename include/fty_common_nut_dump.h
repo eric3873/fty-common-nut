@@ -1,7 +1,9 @@
 /*  =========================================================================
     fty_common_nut_dump - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C)
+        2014 - 2018 Eaton
+        2019        Arnaud Quette <arnaud.quette@free.fr>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,6 +74,19 @@ int dumpDeviceSNMPv1(
  * \return 0 if success.
  */
 int dumpDeviceNetXML(
+    const std::string& port,
+    unsigned loop_nb,
+    unsigned loop_iter_time,
+    KeyValues& out);
+
+/**
+ * \brief Helper method to get data from a Modbus device.
+ *
+ * \param[in] port Device to scan (hostname).
+ * \param[out] out Map of key/value data returned by driver.
+ * \return 0 if success.
+ */
+int dumpDeviceModbus(
     const std::string& port,
     unsigned loop_nb,
     unsigned loop_iter_time,
