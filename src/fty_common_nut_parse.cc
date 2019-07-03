@@ -144,7 +144,8 @@ void fty_common_nut_parse_test(bool verbose)
         { { "name", "nutdev3"}, { "driver", "snmp-ups" }, { "port", "10.130.33.252" }, { "desc", "ePDU MANAGED 38U-A IN L6-30P 24A 1P OUT 20xC13:4xC19" }, { "mibs", "eaton_epdu" }, { "community", "public" } },
         { { "name", "nutdev4"}, { "driver", "snmp-ups" }, { "port", "10.130.33.7" }, { "desc", "HP R1500 INTL UPS" }, { "mibs", "pw" }, { "community", "public" } },
         { { "name", "nutdev5"}, { "driver", "snmp-ups" }, { "port", "10.130.33.151" }, { "desc", "PX3-5493V" }, { "mibs", "raritan-px2" }, { "community", "public" } },
-        { { "name", "nutdev6"}, { "driver", "snmp-ups" }, { "port", "10.130.32.117" }, { "desc", "Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M"}, { "mibs", "eaton_epdu" }, { "secLevel", "noAuthNoPriv" }, { "secName", "user1" } }
+        { { "name", "nutdev6"}, { "driver", "snmp-ups" }, { "port", "10.130.32.117" }, { "desc", "Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M"}, { "mibs", "eaton_epdu" }, { "secLevel", "noAuthNoPriv" }, { "secName", "user1" } },
+        { { "name", "nutdev7"}, { "driver", "nutdrv_modbus" }, { "port", "10.130.21.9" }, { "slave_id", "1" }, { "desc", "Eaton EMECMODB"}, { "mapping", "eaton_pxmeter" } }
     };
 
     // nutcommon::parseConfigurationFile
@@ -181,7 +182,13 @@ void fty_common_nut_parse_test(bool verbose)
         desc = Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M
         mibs =eaton_epdu
         secLevel ="noAuthNoPriv"
-        secName= user1)xxx";
+        secName= user1
+[nutdev7]
+    driver="nutdrv_modbus"
+    port=10.130.21.9
+    slave_id="1"
+    desc="Eaton EMECMODB"
+    mapping="eaton_pxmeter")xxx";
 
         auto result = nutcommon::parseConfigurationFile(configurationFile);
 
@@ -207,6 +214,7 @@ SNMP:driver="snmp-ups",port="10.130.33.252",desc="ePDU MANAGED 38U-A IN L6-30P 2
 SNMP:driver="snmp-ups",port="10.130.33.7",desc="HP R1500 INTL UPS",mibs="pw",community="public",name="nutdev4"
 SNMP:driver="snmp-ups",port="10.130.33.151",desc="PX3-5493V",mibs="raritan-px2",community="public",name="nutdev5"
 SNMP:driver="snmp-ups",port="10.130.32.117",desc="Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M",mibs="eaton_epdu",secLevel="noAuthNoPriv",secName="user1",name="nutdev6"
+MODBUS:driver="nutdrv_modbus",port="10.130.21.9",slave_id="1",desc="Eaton EMECMODB",mapping="eaton_pxmeter"
 )xxx";
 
         auto result = nutcommon::parseScannerOutput(scannerOutput);
