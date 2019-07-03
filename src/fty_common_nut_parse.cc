@@ -184,11 +184,11 @@ void fty_common_nut_parse_test(bool verbose)
         secLevel ="noAuthNoPriv"
         secName= user1
 [nutdev7]
-    driver="nutdrv_modbus"
-    port=10.130.21.9
-    slave_id="1"
-    desc="Eaton EMECMODB"
-    mapping="eaton_pxmeter")xxx";
+        driver="nutdrv_modbus"
+        port=10.130.21.9
+        slave_id="1"
+        desc="Eaton EMECMODB"
+        mapping=eaton_pxmeter)xxx";
 
         auto result = nutcommon::parseConfigurationFile(configurationFile);
 
