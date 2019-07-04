@@ -1,7 +1,9 @@
 /*  =========================================================================
     fty_common_nut_credentials - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C)
+        2014 - 2018 Eaton
+        2019        Arnaud Quette <arnaud.quette@free.fr>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,8 +56,16 @@ struct CredentialsSNMPv3
     std::string privProtocol;
 };
 
+// Note: for now, this CredentialsModbus is done to please compilers
+// In the future, it may be used for Modbus Security
+struct CredentialsModbus
+{
+    CredentialsModbus() : {}
+};
+
 std::vector<CredentialsSNMPv1> getCredentialsSNMPv1();
 std::vector<CredentialsSNMPv3> getCredentialsSNMPv3();
+std::vector<CredentialsModbus> getCredentialsModbus();
 
 }
 
