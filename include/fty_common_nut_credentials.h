@@ -60,7 +60,9 @@ struct CredentialsSNMPv3
 // In the future, it may be used for Modbus Security
 struct CredentialsModbus
 {
-    CredentialsModbus() : {}
+    CredentialsModbus(const std::string& dummy) : MBDummy(dummy) {}
+
+    std::string MBDummy;
 };
 
 std::vector<CredentialsSNMPv1> getCredentialsSNMPv1();
