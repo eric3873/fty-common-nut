@@ -143,6 +143,7 @@ int dumpDeviceNetXML(
 // FIXME: how to get slave_id from output?
 int dumpDeviceModbus(
     const std::string& port,
+    const CredentialsModbus& credentials,
     unsigned loop_nb,
     unsigned loop_iter_time,
     KeyValues& out)

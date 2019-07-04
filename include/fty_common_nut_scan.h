@@ -64,6 +64,7 @@ int scanDeviceRangeNetXML(
 
 int scanDeviceRangeModbusTCP(
     const ScanRangeOptions& scanOptions,
+    const CredentialsModbus& credentials,
     DeviceConfigurations& out);
 
 }
