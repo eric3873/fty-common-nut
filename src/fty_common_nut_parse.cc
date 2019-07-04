@@ -214,7 +214,7 @@ SNMP:driver="snmp-ups",port="10.130.33.252",desc="ePDU MANAGED 38U-A IN L6-30P 2
 SNMP:driver="snmp-ups",port="10.130.33.7",desc="HP R1500 INTL UPS",mibs="pw",community="public",name="nutdev4"
 SNMP:driver="snmp-ups",port="10.130.33.151",desc="PX3-5493V",mibs="raritan-px2",community="public",name="nutdev5"
 SNMP:driver="snmp-ups",port="10.130.32.117",desc="Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M",mibs="eaton_epdu",secLevel="noAuthNoPriv",secName="user1",name="nutdev6"
-MODBUS:driver="nutdrv_modbus",port="10.130.21.9",slave_id="1",desc="Eaton EMECMODB",mapping="eaton_pxmeter"
+MODBUS:driver="nutdrv_modbus",port="10.130.21.9",slave_id="1",desc="Eaton EMECMODB",mapping="eaton_pxmeter",name="nutdev7"
 )xxx";
 
         auto result = nutcommon::parseScannerOutput(scannerOutput);
