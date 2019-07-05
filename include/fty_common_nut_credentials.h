@@ -56,18 +56,8 @@ struct CredentialsSNMPv3
     std::string privProtocol;
 };
 
-// Note: for now, this CredentialsModbus is done to please compilers
-// In the future, it may be used for Modbus Security
-struct CredentialsModbus
-{
-    CredentialsModbus(const std::string& dummy) : MBDummy(dummy) {}
-
-    std::string MBDummy;
-};
-
 std::vector<CredentialsSNMPv1> getCredentialsSNMPv1();
 std::vector<CredentialsSNMPv3> getCredentialsSNMPv3();
-std::vector<CredentialsModbus> getCredentialsModbus();
 
 }
 

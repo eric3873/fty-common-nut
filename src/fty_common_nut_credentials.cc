@@ -114,13 +114,4 @@ std::vector<CredentialsSNMPv1> getCredentialsSNMPv1()
     return creds;
 }
 
-std::vector<CredentialsModbus> getCredentialsModbus()
-{
-    // Note: for now, this CredentialsModbus is done to please compilers
-    // In the future, it may be used for Modbus Security
-    std::vector<CredentialsModbus> creds;
-    return creds;
-    ;
-}
-
 }
