@@ -57,6 +57,9 @@ struct CredentialsSNMPv3
 std::vector<CredentialsSNMPv1> getCredentialsSNMPv1();
 std::vector<CredentialsSNMPv3> getCredentialsSNMPv3();
 
+std::vector<CredentialsSNMPv1> getCredentialsSNMPv1(const std::set<std::string> &documentIds);
+std::vector<CredentialsSNMPv3> getCredentialsSNMPv3(const std::set<std::string> &documentIds);
+
 }
 
 #endif
