@@ -37,17 +37,22 @@ namespace nutcommon {
 
 static std::string performSingleMapping(const KeyValues &mapping, const std::string &key, int daisychain)
 {
-    const static std::regex prefixRegex(R"xxx(device\.([[:digit:]]+)\.(.+))xxx", std::regex::optimize);
+    const static std::regex prefixRegex(R"xxx((device|ambient)\.([[:digit:]]+)\.(.+))xxx", std::regex::optimize);
     std::smatch matches;
 
     std::string transformedKey = key;
 
+    log_trace("%s: Looking for key %s (index %i)", __func__, key.c_str(), daisychain);
+
     // Daisy-chained special case, need to fold it back into conventional case.
     if (daisychain > 0 && std::regex_match(key, matches, prefixRegex)) {
+        log_debug("performSingleMapping: match1 = %s, match2 = %s", matches.str(1).c_str(), matches.str(2).c_str());
         if (matches.str(1) == std::to_string(daisychain)) {
-            // We have a "device.<id>.<property>" property, map it to either device.<property> or <property>.
-            if (mapping.find("device." + matches.str(2)) != mapping.end()) {
-                transformedKey = "device." + matches.str(2);
+            // We have a "{device,ambient}.<id>.<property>" property, map it to either device.<property> or <property>.
+            //if (mapping.find("device." + matches.str(2)) != mapping.end()) {
+            if (mapping.find(matches.str(1) + "." + matches.str(2)) != mapping.end()) {
+                // transformedKey = "device." + matches.str(2);
+                transformedKey = matches.str(1) + "." + matches.str(2);
             }
             else {
                 transformedKey = matches.str(2);
@@ -65,7 +70,8 @@ static std::string performSingleMapping(const KeyValues &mapping, const std::str
 
 KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int daisychain)
 {
-    const static std::regex overrideRegex(R"xxx(device\.([^[:digit:]].*))xxx", std::regex::optimize);
+    const static std::regex overrideRegex(R"xxx((device|ambient)\.([^[:digit:]].*))xxx", std::regex::optimize);
+    // ((device|ambient)\.\d{0,2}(.*))
     const std::string strDaisychain = std::to_string(daisychain);
 
     KeyValues mappedValues;
@@ -73,10 +79,14 @@ KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int 
     for (auto value : values) {
         const std::string mappedKey = performSingleMapping(mapping, value.first, daisychain);
 
+        log_trace("%s: got mappedKey '%s'", __func__, mappedKey.c_str());
+
         // Let daisy-chained device data override host device data (device.<id>.<property> => device.<property> or <property>).
         std::smatch matches;
         if (daisychain > 0 && std::regex_match(value.first, matches, overrideRegex)) {
-            if (values.count("device." + strDaisychain + "." + matches.str(1))) {
+            log_debug("performMapping: match1 = %s, match2 = %s, match3 = %s", matches.str(1).c_str(), matches.str(2).c_str(), matches.str(3).c_str());
+//            if (values.count("device." + strDaisychain + "." + matches.str(1))) {
+            if (values.count(matches.str(1) + "." + strDaisychain + "." + matches.str(1))) {
                 log_trace("Ignoring overriden property '%s' during mapping (daisy-chain override).", value.first.c_str());
                 continue;
             }
@@ -144,17 +154,22 @@ KeyValues loadMapping(const std::string &file, const std::string &type)
 
             auto x = name.find("#");
             auto y = value.find("#");
-            if (x == std::string::npos || y == std::string::npos) {
+            // normal mapping means no index in the source AND dest 
+            if (x == std::string::npos && y == std::string::npos) {
+            // if (x == std::string::npos || y == std::string::npos) {
                 // Normal mapping, insert it.
                 result.emplace(std::make_pair(name, value));
             }
             else {
+                // either (src AND dest) have index or just src (as with ambient)
                 // Template mapping, instanciate it.
                 for (int i = 1; i < 99; i++) {
                     std::string instanceName = name;
                     std::string instanceValue = value;
-                    instanceName.replace(x, 1, std::to_string(i));
-                    instanceValue.replace(y, 1, std::to_string(i));
+                    if (x != std::string::npos)
+                        instanceName.replace(x, 1, std::to_string(i));
+                    if (y != std::string::npos)
+                        instanceValue.replace(y, 1, std::to_string(i));
                     result.emplace(std::make_pair(instanceName, instanceValue));
                 }
             }
