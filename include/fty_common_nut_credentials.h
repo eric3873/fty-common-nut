@@ -29,12 +29,7 @@
 #ifndef FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
 #define FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
 
-<<<<<<< HEAD
 #include "fty_common_nut_library.h"
-=======
-#include "secw_document.h"
-#include "fty_common_nut_utils.h"
->>>>>>> Separate and cleaning code
 
 namespace fty {
 namespace nut {
@@ -47,10 +42,6 @@ namespace nut {
  * \throw std::runtime_error if the document can't be converted with this driver.
  */
 KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std::string& driver);
-
-DeviceConfiguration instanciateSecurityWalletDocument(const CredentialsSNMPv1& creds);
-DeviceConfiguration instanciateSecurityWalletDocument(const CredentialsSNMPv3& creds);
-std::set<secw::Id> matchSecurityDocumentIDsFromDeviceConfiguration(const DeviceConfiguration& conf, const std::vector<CredentialsSNMPv1>& credsV1, const std::vector<CredentialsSNMPv3>& credsV3);
 
 }
 }
