@@ -79,6 +79,10 @@ KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std
             throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver snmp-ups.").c_str());    
         }
     }
+    else if (driver == "dummy-ups") {
+        // No security wallet documents for dummy-ups.
+        return {};
+    }
     else {
         throw std::runtime_error((std::string("Unknown driver ")+driver+" for security wallet document conversion.").c_str());
     }
