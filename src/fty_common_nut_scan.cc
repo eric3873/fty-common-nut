@@ -97,7 +97,19 @@ DeviceConfigurations scanRangeDevices(
 
     (void)priv::runCommand(args, stdout, stderr, timeout);
 
-    return parseScannerOutput(stdout);
+    DeviceConfigurations configs = parseScannerOutput(stdout);
+    // FIXME Workaround for nut-scanner: Filter none dmf drivers when dmf protocol is requested
+    if (protocol == SCAN_PROTOCOL_SNMP_DMF) {
+        for (auto itr_configs = configs.begin(); itr_configs != configs.end(); ++itr_configs) {
+            auto itr = itr_configs->find("driver");
+            if (itr != itr_configs->end()) {
+                if (itr->second.find("-dnf") == std::string::npos) {
+                    configs.erase(itr_configs);
+                }
+            }
+        }
+    }
+    return configs;
 }
 
 }
