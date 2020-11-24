@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty_common_nut_credentials - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,114 +28,61 @@
 
 #include "fty_common_nut_classes.h"
 
-#include "fty_common_socket_sync_client.h"
+namespace fty {
+namespace nut {
 
-namespace nutcommon {
-	
-static const std::string SECW_SOCKET_PATH = "/run/fty-security-wallet/secw.socket";
+static const std::map<secw::Snmpv3SecurityLevel, std::string> s_secMapping {
+    { secw::NO_AUTH_NO_PRIV, "noAuthNoPriv" },
+    { secw::AUTH_NO_PRIV, "authNoPriv" },
+    { secw::AUTH_PRIV, "authPriv" },
+} ;
 
-using DocumentFilter = std::function<bool(const secw::Document*)>;
+static const std::map<secw::Snmpv3AuthProtocol, std::string> s_authMapping {
+    { secw::MD5, "MD5" },
+    { secw::SHA, "SHA" },
+} ;
 
-std::vector<CredentialsSNMPv3> getCredentialsSNMPv3(DocumentFilter pred)
+static const std::map<secw::Snmpv3PrivProtocol, std::string> s_privMapping {
+    { secw::DES, "DES" },
+    { secw::AES, "AES" },
+} ;
+
+KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std::string& driver)
 {
-    static const std::map<secw::Snmpv3AuthProtocol, std::string> authMapping = {
-        { secw::MD5, "MD5" },
-        { secw::SHA, "SHA" }
-    } ;
+    if (driver.find_first_of("snmp-ups") == 0) {
+        secw::Snmpv1Ptr snmpv1 = secw::Snmpv1::tryToCast(doc);
+        secw::Snmpv3Ptr snmpv3 = secw::Snmpv3::tryToCast(doc);
 
-    static const std::map<secw::Snmpv3PrivProtocol, std::string> privMapping = {
-        { secw::DES, "DES" },
-        { secw::AES, "AES" }
-    } ;
+        if (snmpv1) {
+            return {{ "community", snmpv1->getCommunityName() }};
+        }
+        else if (snmpv3) {
+            KeyValues output {
+                { "snmp_version", "v3" },
+                { "secName", snmpv3->getSecurityName() },
+                { "secLevel", s_secMapping.at(snmpv3->getSecurityLevel()) },
+            };
 
-    std::vector<CredentialsSNMPv3> creds;
+            if (snmpv3->getSecurityLevel() != secw::NO_AUTH_NO_PRIV) {
+                output.emplace("authPassword", snmpv3->getAuthPassword());
+                output.emplace("authProtocol", s_authMapping.at(snmpv3->getAuthProtocol()));
 
-    try {
-        fty::SocketSyncClient secwSyncClient(SECW_SOCKET_PATH);
-
-        auto client = secw::ConsumerAccessor(secwSyncClient);
-        auto secCreds = client.getListDocumentsWithPrivateData("default", "discovery_monitoring");
-
-        for (const auto &i : secCreds) {
-            if (!pred(i.get())) {
-                continue;
-            }
-
-            auto cred = dynamic_cast<const secw::Snmpv3*>(i.get());
-            if (cred) {
-                std::string secName = cred->getSecurityName();
-                std::string authPassword, authProtocol;
-                std::string privPassword, privProtocol;
-
-                if (cred->getSecurityLevel() != secw::NO_AUTH_NO_PRIV) {
-                    authPassword = cred->getAuthPassword();
-                    authProtocol = authMapping.at(cred->getAuthProtocol());
-
-                    if (cred->getSecurityLevel() != secw::AUTH_NO_PRIV) {
-                        privPassword = cred->getPrivPassword();
-                        privProtocol = privMapping.at(cred->getPrivProtocol());
-                    }
+                if (snmpv3->getSecurityLevel() != secw::AUTH_NO_PRIV) {
+                    output.emplace("privPassword", snmpv3->getPrivPassword());
+                    output.emplace("privProtocol", s_privMapping.at(snmpv3->getPrivProtocol()));
                 }
-
-                creds.emplace_back(secName, authPassword, authProtocol, privPassword, privProtocol);
             }
+
+            return output;
         }
-        log_debug("Fetched %d SNMPv3 credentials from security wallet.", creds.size());
-    }
-    catch (std::exception &e) {
-        log_warning("Failed to fetch SNMPv3 credentials from security wallet: %s", e.what());
-    }
-
-    return creds;
-}
-
-std::vector<CredentialsSNMPv1> getCredentialsSNMPv1(DocumentFilter pred)
-{
-    std::vector<CredentialsSNMPv1> creds;
-
-    try {
-        fty::SocketSyncClient secwSyncClient(SECW_SOCKET_PATH);
-        auto client = secw::ConsumerAccessor(secwSyncClient);
-        auto secCreds = client.getListDocumentsWithPrivateData("default", "discovery_monitoring");
-
-        for (const auto &i : secCreds) {
-            if (!pred(i.get())) {
-                continue;
-            }
-
-            auto cred = dynamic_cast<const secw::Snmpv1*>(i.get());
-            if (cred) {
-                creds.emplace_back(cred->getCommunityName());
-            }
+        else {
+            throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver snmp-ups.").c_str());    
         }
-
-        log_debug("Fetched %d SNMPv1 credentials from security wallet.", creds.size());
     }
-    catch (std::exception &e) {
-        log_warning("Failed to fetch SNMPv1 credentials from security wallet: %s", e.what());
+    else {
+        throw std::runtime_error((std::string("Unknown driver ")+driver+" for security wallet document conversion.").c_str());
     }
-
-    return creds;
 }
 
-std::vector<CredentialsSNMPv3> getCredentialsSNMPv3() {
-    return getCredentialsSNMPv3([](const secw::Document*) -> bool { return true; });
 }
-
-std::vector<CredentialsSNMPv1> getCredentialsSNMPv1() {
-    return getCredentialsSNMPv1([](const secw::Document*) -> bool { return true; });
-}
-
-std::vector<CredentialsSNMPv3> getCredentialsSNMPv3(const std::set<std::string> &documentIds) {
-    return getCredentialsSNMPv3([&documentIds](const secw::Document* document) -> bool {
-        return documentIds.count(document->getId());
-    });
-}
-
-std::vector<CredentialsSNMPv1> getCredentialsSNMPv1(const std::set<std::string> &documentIds) {
-    return getCredentialsSNMPv1([&documentIds](const secw::Document* document) -> bool {
-        return documentIds.count(document->getId());
-    });
-}
-
 }

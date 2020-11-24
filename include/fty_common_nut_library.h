@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty-common-nut - generated layer of public API
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,13 +31,9 @@
 
 //  External dependencies
 #include <czmq.h>
-#include <malamute.h>
 #include <cxxtools/allocator.h>
-#include <fty_log.h>
-#include <fty_common_mlm.h>
-#include <ftyproto.h>
-#include <openssl/sha.h>
-#include <fty_common_socket.h>
+#include <tntdb.h>
+#include <fty_common.h>
 #include <fty_security_wallet.h>
 
 //  FTY_COMMON_NUT version macros for compile-time API detection
@@ -90,8 +86,6 @@ typedef struct _fty_common_nut_parse_t fty_common_nut_parse_t;
 #define FTY_COMMON_NUT_PARSE_T_DEFINED
 typedef struct _fty_common_nut_scan_t fty_common_nut_scan_t;
 #define FTY_COMMON_NUT_SCAN_T_DEFINED
-typedef struct _fty_common_nut_utils_t fty_common_nut_utils_t;
-#define FTY_COMMON_NUT_UTILS_T_DEFINED
 
 
 //  Public classes, each with its own header file
@@ -100,7 +94,6 @@ typedef struct _fty_common_nut_utils_t fty_common_nut_utils_t;
 #include "fty_common_nut_dump.h"
 #include "fty_common_nut_parse.h"
 #include "fty_common_nut_scan.h"
-#include "fty_common_nut_utils.h"
 
 #ifdef FTY_COMMON_NUT_BUILD_DRAFT_API
 

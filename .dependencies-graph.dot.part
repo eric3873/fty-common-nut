@@ -1,0 +1,7 @@
+   fty-common-nut -> libsodium;
+   fty-common-nut -> libzmq;
+   fty-common-nut -> czmq;
+   fty-common-nut -> cxxtools;
+   fty-common-nut -> tntdb;
+   fty-common-nut -> fty-common;
+   fty-common-nut -> fty-security-wallet;

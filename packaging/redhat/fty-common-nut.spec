@@ -1,7 +1,7 @@
 #
 #    fty-common-nut - Provides common NUT tools for agents
 #
-#    Copyright (C) 2014 - 2018 Eaton
+#    Copyright (C) 2014 - 2020 Eaton
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -54,15 +54,9 @@ BuildRequires:  gcc-c++ >= 4.9.0
 BuildRequires:  libsodium-devel
 BuildRequires:  zeromq-devel
 BuildRequires:  czmq-devel >= 3.0.2
-BuildRequires:  malamute-devel >= 1.0.0
 BuildRequires:  cxxtools-devel
-BuildRequires:  log4cplus-devel
-BuildRequires:  fty-common-logging-devel
+BuildRequires:  tntdb-devel
 BuildRequires:  fty-common-devel
-BuildRequires:  fty-common-mlm-devel
-BuildRequires:  fty-proto-devel >= 1.0.0
-BuildRequires:  openssl-devel
-BuildRequires:  fty-common-socket-devel
 BuildRequires:  fty-security-wallet-devel
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
@@ -90,15 +84,9 @@ Requires:       libfty_common_nut1 = %{version}
 Requires:       libsodium-devel
 Requires:       zeromq-devel
 Requires:       czmq-devel >= 3.0.2
-Requires:       malamute-devel >= 1.0.0
 Requires:       cxxtools-devel
-Requires:       log4cplus-devel
-Requires:       fty-common-logging-devel
+Requires:       tntdb-devel
 Requires:       fty-common-devel
-Requires:       fty-common-mlm-devel
-Requires:       fty-proto-devel >= 1.0.0
-Requires:       openssl-devel
-Requires:       fty-common-socket-devel
 Requires:       fty-security-wallet-devel
 
 %description devel

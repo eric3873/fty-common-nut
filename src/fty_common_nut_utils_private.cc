@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty_common_nut_utils_private - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
 
 #include "fty_common_nut_classes.h"
 
-namespace nutcommon {
+namespace fty {
+namespace nut {
 namespace priv {
 
 int runCommand(
@@ -63,5 +64,6 @@ int runCommand(
     return ret;
 }
 
+}
 }
 }

@@ -21,8 +21,6 @@ fty_common_nut_parse.txt
 fty_common_nut_parse.doc
 fty_common_nut_scan.txt
 fty_common_nut_scan.doc
-fty_common_nut_utils.txt
-fty_common_nut_utils.doc
 
 # Make sure to track the manually maintained project description
 !*.adoc

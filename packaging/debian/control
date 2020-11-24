@@ -1,7 +1,7 @@
 #
 #    fty-common-nut - Provides common NUT tools for agents
 #
-#    Copyright (C) 2014 - 2018 Eaton
+#    Copyright (C) 2014 - 2020 Eaton
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -27,15 +27,9 @@ Build-Depends: debhelper (>= 9),
     libsodium-dev,
     libzmq3-dev,
     libczmq-dev (>= 3.0.2),
-    libmlm-dev (>= 1.0.0),
     libcxxtools-dev,
-    liblog4cplus-dev,
-    libfty-common-logging-dev,
+    libtntdb-dev,
     libfty-common-dev,
-    libfty-common-mlm-dev,
-    libfty-proto-dev (>= 1.0.0),
-    libssl-dev,
-    libfty-common-socket-dev,
     libfty-security-wallet-dev,
     gcc (>= 4.9.0), g++ (>= 4.9.0),
     asciidoc-base | asciidoc, xmlto,
@@ -56,15 +50,9 @@ Depends:
     libsodium-dev,
     libzmq3-dev,
     libczmq-dev (>= 3.0.2),
-    libmlm-dev (>= 1.0.0),
     libcxxtools-dev,
-    liblog4cplus-dev,
-    libfty-common-logging-dev,
+    libtntdb-dev,
     libfty-common-dev,
-    libfty-common-mlm-dev,
-    libfty-proto-dev (>= 1.0.0),
-    libssl-dev,
-    libfty-common-socket-dev,
     libfty-security-wallet-dev,
     libfty-common-nut1 (= ${binary:Version})
 Description: fty-common-nut development tools

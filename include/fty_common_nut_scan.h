@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty_common_nut_scan - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,37 +29,51 @@
 #ifndef FTY_COMMON_NUT_SCAN_H_INCLUDED
 #define FTY_COMMON_NUT_SCAN_H_INCLUDED
 
-namespace nutcommon {
+#include "fty_common_nut_library.h"
 
-struct ScanRangeOptions
+namespace fty {
+namespace nut {
+
+enum ScanProtocol
 {
-    ScanRangeOptions(const std::string& ip, int timeout) :
-        ip_address_start(ip), ip_address_end(ip), timeout(timeout) {}
-
-    ScanRangeOptions(const std::string& start, const std::string& end, int timeout) :
-        ip_address_start(start), ip_address_end(end), timeout(timeout) {}
-
-    std::string ip_address_start;
-    std::string ip_address_end;
-    int timeout;
+    SCAN_PROTOCOL_NETXML,
+    SCAN_PROTOCOL_SNMP,
+    SCAN_PROTOCOL_SNMP_DMF
 };
 
-int scanDeviceRangeSNMPv3(
-    const ScanRangeOptions& scanOptions,
-    const CredentialsSNMPv3& credentials,
-    bool use_dmf,
-    DeviceConfigurations& out);
+/**
+ * \brief Scan for NUT driver configurations on an IP address.
+ * \param protocol Protocol to scan for.
+ * \param idAddress IP address to scan.
+ * \param timeout Timeout of scan, in seconds.
+ * \param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
+ * \return List of device configurations found.
+ */
+DeviceConfigurations scanDevice(
+    ScanProtocol protocol,
+    std::string ipAddress,
+    unsigned timeout,
+    const std::vector<secw::DocumentPtr>& documents = {}
+);
 
-int scanDeviceRangeSNMPv1(
-    const ScanRangeOptions& scanOptions,
-    const CredentialsSNMPv1& credentials,
-    bool use_dmf,
-    DeviceConfigurations& out);
+/**
+ * \brief Scan for NUT configurations on an IP address range.
+ * \param protocol Protocol to scan for.
+ * \param idAddressStart First IP address to scan.
+ * \param idAddressEnd Last IP address to scan.
+ * \param timeout Timeout of scan, in seconds.
+ * \param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
+ * \return List of device configurations found.
+ */
+DeviceConfigurations scanRangeDevices(
+    ScanProtocol protocol,
+    std::string ipAddressStart,
+    std::string ipAddressEnd,
+    unsigned timeout,
+    const std::vector<secw::DocumentPtr>& documents = {}
+);
 
-int scanDeviceRangeNetXML(
-    const ScanRangeOptions& scanOptions,
-    DeviceConfigurations& out);
-
+}
 }
 
 #endif

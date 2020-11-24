@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty_common_nut_parse - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@
 #include <iostream>
 #include <regex>
 
-namespace nutcommon {
+namespace fty {
+namespace nut {
 
 DeviceConfigurations parseConfigurationFile(const std::string& in)
 {
@@ -115,10 +116,15 @@ KeyValues parseDumpOutput(const std::string& in)
 }
 
 }
+}
 
-std::ostream& operator<<(std::ostream &out, const nutcommon::DeviceConfiguration &cfg)
+std::ostream& operator<<(std::ostream &out, const fty::nut::DeviceConfiguration &cfg)
 {
-    const auto& name = cfg.at("name");
+    std::string name = "<unknown>";
+    if (cfg.count("name")) {
+        name = cfg.at("name");
+    }
+
     out << "[" << name << "]" << std::endl;
     for (const auto &i : cfg) {
         if (i.first == "name") {
@@ -138,7 +144,7 @@ void fty_common_nut_parse_test(bool verbose)
 {
     std::cout << " * fty_common_nut_parse: ";
 
-    static const nutcommon::DeviceConfigurations expectedDeviceConfigurationResult = {
+    static const fty::nut::DeviceConfigurations expectedDeviceConfigurationResult = {
         { { "name", "nutdev1"}, { "driver", "netxml-ups" }, { "port", "http://10.130.33.199" }, { "desc", "Mosaic 4M" } },
         { { "name", "nutdev2"}, { "driver", "netxml-ups" }, { "port", "http://10.130.33.194" }, { "desc", "Mosaic 4M 16M" } },
         { { "name", "nutdev3"}, { "driver", "snmp-ups" }, { "port", "10.130.33.252" }, { "desc", "ePDU MANAGED 38U-A IN L6-30P 24A 1P OUT 20xC13:4xC19" }, { "mibs", "eaton_epdu" }, { "community", "public" } },
@@ -147,7 +153,7 @@ void fty_common_nut_parse_test(bool verbose)
         { { "name", "nutdev6"}, { "driver", "snmp-ups" }, { "port", "10.130.32.117" }, { "desc", "Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M"}, { "mibs", "eaton_epdu" }, { "secLevel", "noAuthNoPriv" }, { "secName", "user1" } }
     };
 
-    // nutcommon::parseConfigurationFile
+    // fty::nut::parseConfigurationFile
     {
         static const std::string configurationFile = R"xxx([nutdev1]
         driver = "netxml-ups"
@@ -183,7 +189,7 @@ void fty_common_nut_parse_test(bool verbose)
         secLevel ="noAuthNoPriv"
         secName= user1)xxx";
 
-        auto result = nutcommon::parseConfigurationFile(configurationFile);
+        auto result = fty::nut::parseConfigurationFile(configurationFile);
 
         // Check structures are identical.
         assert(result.size() == expectedDeviceConfigurationResult.size());
@@ -199,7 +205,7 @@ void fty_common_nut_parse_test(bool verbose)
         }
     }
 
-    // nutcommon::parseScannerOutput
+    // fty::nut::parseScannerOutput
     {
         static const std::string scannerOutput = R"xxx(XML:driver="netxml-ups",port="http://10.130.33.199",desc="Mosaic 4M",name="nutdev1"
 XML:driver="netxml-ups",port="http://10.130.33.194",desc="Mosaic 4M 16M",name="nutdev2"
@@ -209,7 +215,7 @@ SNMP:driver="snmp-ups",port="10.130.33.151",desc="PX3-5493V",mibs="raritan-px2",
 SNMP:driver="snmp-ups",port="10.130.32.117",desc="Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M",mibs="eaton_epdu",secLevel="noAuthNoPriv",secName="user1",name="nutdev6"
 )xxx";
 
-        auto result = nutcommon::parseScannerOutput(scannerOutput);
+        auto result = fty::nut::parseScannerOutput(scannerOutput);
 
         // Check structures are identical.
         assert(result.size() == expectedDeviceConfigurationResult.size());
@@ -225,7 +231,7 @@ SNMP:driver="snmp-ups",port="10.130.32.117",desc="Eaton ePDU MA 1P IN:C20 16A OU
         }
     }
 
-    // nutcommon::parseDumpOutput
+    // fty::nut::parseDumpOutput
     {
         // Launching the command by hand for the NetXML driver resulted in some extra junk at the beginning.
         static const std::string dumpOutput = R"xxx(Network UPS Tools - network XML UPS 0.42 (2.7.4.1)
@@ -254,7 +260,7 @@ ups.model: HP R/T3000 HV INTL UPS
 ups.model.aux: UPS LI R
 ups.type: offline / line interactive
 )xxx";
-        static const nutcommon::KeyValues expectedValues = {
+        static const fty::nut::KeyValues expectedValues = {
             { "ambient.humidity.high", "90" },
             { "ambient.humidity.low", "5" },
             { "ambient.temperature.high", "40" },
@@ -278,7 +284,7 @@ ups.type: offline / line interactive
             { "ups.type", "offline / line interactive" }
         };
 
-        auto result = nutcommon::parseDumpOutput(dumpOutput);
+        auto result = fty::nut::parseDumpOutput(dumpOutput);
 
         // Check structures are identical.
         assert(result.size() == expectedValues.size());
@@ -289,7 +295,7 @@ ups.type: offline / line interactive
         }
     }
 
-    // operator<< for nutcommon::DeviceConfiguration
+    // operator<< for fty::nut::DeviceConfiguration
     {
         static const std::string outputReference = R"xxx([nutdev6]
 	desc = "Eaton ePDU MA 1P IN:C20 16A OUT:20xC13, 4xC19M"
@@ -299,7 +305,7 @@ ups.type: offline / line interactive
 	secLevel = "noAuthNoPriv"
 	secName = "user1"
 )xxx";
-        static const nutcommon::DeviceConfiguration inputData = {
+        static const fty::nut::DeviceConfiguration inputData = {
             { "name", "nutdev6" },
             { "driver", "snmp-ups" },
             { "port", "10.130.32.117" },
@@ -314,6 +320,9 @@ ups.type: offline / line interactive
         std::string outputData = ss.str();
         assert(outputReference == outputData);
     }
+
+    /// XXX: we indirectly pull protobuf...
+    google::protobuf::ShutdownProtobufLibrary();
 
     std::cout << "OK" << std::endl;
 }

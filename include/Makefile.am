@@ -9,7 +9,6 @@ nobase_include_HEADERS = \
     fty_common_nut_dump.h \
     fty_common_nut_parse.h \
     fty_common_nut_scan.h \
-    fty_common_nut_utils.h \
     fty_common_nut_library.h
 
 

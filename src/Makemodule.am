@@ -18,7 +18,6 @@ src_libfty_common_nut_la_SOURCES = \
     src/fty_common_nut_dump.cc \
     src/fty_common_nut_parse.cc \
     src/fty_common_nut_scan.cc \
-    src/fty_common_nut_utils.cc \
     src/fty_common_nut_utils_private.cc \
     src/platform.h
 

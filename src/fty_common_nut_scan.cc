@@ -1,7 +1,7 @@
 /*  =========================================================================
     fty_common_nut_scan - class description
 
-    Copyright (C) 2014 - 2018 Eaton
+    Copyright (C) 2014 - 2020 Eaton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,113 +28,77 @@
 
 #include "fty_common_nut_classes.h"
 
-namespace nutcommon {
+namespace fty {
+namespace nut {
 
-int s_scanDeviceRange(
-    const ScanRangeOptions& scanOptions,
-    const MlmSubprocess::Argv& extra,
-    DeviceConfigurations& out)
+static std::map<ScanProtocol, std::string> s_scanProtocols {
+    { SCAN_PROTOCOL_NETXML,     "--xml_scan" },
+    { SCAN_PROTOCOL_SNMP,       "--snmp_scan" },
+    { SCAN_PROTOCOL_SNMP_DMF,   "--snmp_scan_dmf" },
+};
+
+static std::map<ScanProtocol, std::string> s_driverProtocols {
+    { SCAN_PROTOCOL_NETXML,     "netxml-ups" },
+    { SCAN_PROTOCOL_SNMP,       "snmp-ups" },
+    { SCAN_PROTOCOL_SNMP_DMF,   "snmp-ups" },
+};
+
+
+DeviceConfigurations scanDevice(
+    ScanProtocol protocol,
+    std::string ipAddress,
+    unsigned timeout,
+    const std::vector<secw::DocumentPtr>& documents)
 {
-    MlmSubprocess::Argv args = { "nut-scanner", "--quiet", "--disp_parsable", "--start_ip", scanOptions.ip_address_start };
+    return scanRangeDevices(protocol, ipAddress, ipAddress, timeout, documents);
+}
+
+DeviceConfigurations scanRangeDevices(
+    ScanProtocol protocol,
+    std::string ipAddressStart,
+    std::string ipAddressEnd,
+    unsigned timeout,
+    const std::vector<secw::DocumentPtr>& documents)
+{
     std::string stdout, stderr;
-    int ret;
+    MlmSubprocess::Argv args {
+        "nut-scanner",
+        "--quiet",
+        "--disp_parsable",
+        s_scanProtocols.at(protocol),
+        "--start_ip", ipAddressStart
+    };
 
-    if (scanOptions.ip_address_start != scanOptions.ip_address_end) {
+    if (ipAddressStart != ipAddressEnd) {
         args.emplace_back("--end_ip");
-        args.emplace_back(scanOptions.ip_address_end);
+        args.emplace_back(ipAddressEnd);
     }
 
-    for (const auto& i : extra) {
-        args.emplace_back(i);
-    }
+    std::vector<KeyValues> documentParameters;
+    std::transform(
+        documents.begin(),
+        documents.end(),
+        std::back_inserter(documentParameters),
+        std::bind(convertSecwDocumentToKeyValues, std::placeholders::_1, s_driverProtocols.at(protocol))
+    );
 
-    ret = priv::runCommand(args, stdout, stderr, scanOptions.timeout);
-
-    auto result = parseScannerOutput(stdout);
-    out.insert(out.end(), result.begin(), result.end());
-
-    return ret;
-}
-
-int scanDeviceRangeSNMPv3(
-    const ScanRangeOptions& scanOptions,
-    const CredentialsSNMPv3& credentials,
-    bool use_dmf,
-    DeviceConfigurations& out)
-{
-    if (::getenv("BIOS_NUT_USE_DMF")) {
-        use_dmf = true;
-    }
-
-    MlmSubprocess::Argv extra = {
-        use_dmf ? "-z" : "--snmp_scan",
-        "--secName", credentials.secName
-    };
-
-    /**
-     * There are three possible cases:
-     *  - noAuthNoPriv (nothing provided)
-     *  - authNoPriv (authentification password provided)
-     *  - authPriv (authentification and privacy password provided)
-     * Both authentification and privacy passwords may optionally provide a specific protocol to use.
-     */
-    if (!credentials.authPassword.empty()) {
-        extra.emplace_back("--authPassword");
-        extra.emplace_back(credentials.authPassword);
-        if (!credentials.authProtocol.empty()) {
-            extra.emplace_back("--authProtocol");
-            extra.emplace_back(credentials.authProtocol);
+    for (auto& documentParameter : documentParameters) {
+        // Remove SnmpV3's "snmp_version" from list of arguments.
+        auto it = documentParameter.find("snmp_version");
+        if (it != documentParameter.end()) {
+            documentParameter.erase(it);
         }
 
-        if (!credentials.privPassword.empty()) {
-            extra.emplace_back("--privPassword");
-            extra.emplace_back(credentials.privPassword);
-            if (!credentials.privProtocol.empty()) {
-                extra.emplace_back("--privProtocol");
-                extra.emplace_back(credentials.privProtocol);
-            }
-
-            extra.emplace_back("--secLevel");
-            extra.emplace_back("authPriv");
-        }
-        else {
-            extra.emplace_back("--secLevel");
-            extra.emplace_back("authNoPriv");
+        for (const auto& parameter : documentParameter) {
+            args.emplace_back("--" + parameter.first);
+            args.emplace_back(parameter.second);
         }
     }
-    else {
-        extra.emplace_back("--secLevel");
-        extra.emplace_back("noAuthNoPriv");
-    }
 
-    return s_scanDeviceRange(scanOptions, extra, out);
+    (void)priv::runCommand(args, stdout, stderr, timeout);
+
+    return parseScannerOutput(stdout);
 }
 
-int scanDeviceRangeSNMPv1(
-    const ScanRangeOptions& scanOptions,
-    const CredentialsSNMPv1& credentials,
-    bool use_dmf,
-    DeviceConfigurations& out)
-{
-    if (::getenv("BIOS_NUT_USE_DMF")) {
-        use_dmf = true;
-    }
-
-    MlmSubprocess::Argv extra = {
-        use_dmf ? "-z" : "--snmp_scan",
-        "--community", credentials.community
-    };
-
-    return s_scanDeviceRange(scanOptions, extra, out);
 }
-
-int scanDeviceRangeNetXML(
-    const ScanRangeOptions& scanOptions,
-    DeviceConfigurations& out)
-{
-    MlmSubprocess::Argv extra = { "--xml_scan" };
-
-    return s_scanDeviceRange(scanOptions, extra, out);
-}
-
 }
