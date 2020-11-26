@@ -79,6 +79,19 @@ KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std
             throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver snmp-ups.").c_str());    
         }
     }
+    else if (driver == "etn-nut-powercom") {
+        secw::UserAndPasswordPtr creds = secw::UserAndPassword::tryToCast(doc);
+
+        if (creds) {
+            return {
+                { "username", creds->getUsername() },
+                { "password", creds->getPassword() }
+            };
+        }
+        else {
+            throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver etn-nut-powercom.").c_str());
+        }
+    }
     else {
         throw std::runtime_error((std::string("Unknown driver ")+driver+" for security wallet document conversion.").c_str());
     }
