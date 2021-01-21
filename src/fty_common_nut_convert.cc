@@ -36,26 +36,39 @@
 namespace fty {
 namespace nut {
 
-static std::string performSingleMapping(const KeyValues &mapping, const std::string &key, int daisychain)
+static std::string performSingleMapping(const KeyValues &mapping, const std::string &key, int index)
 {
-    const static std::regex prefixRegex(R"xxx(device\.([[:digit:]]+)\.(.+))xxx", std::regex::optimize);
+    // Need to capture #n:
+    // device.n.xxx - daisychain device
+    // device.n.ambient.xxx  -> emp01 with daisychain (only one sensor on a device #n)
+    // ambient.n.xxx  -> emp02 with no daisychain
+    // device.1.ambient.n.xxx -> emp02 with daisychain (all sensor are on master #1)
+    const static std::regex prefixRegex(R"xxx(.*((?:device(?!\.\d*\.ambient\.\d*\.))|ambient)\.(\d*)\.(.+))xxx", std::regex::optimize);
     std::smatch matches;
 
     std::string transformedKey = key;
 
-    // Daisy-chained special case, need to fold it back into conventional case.
-    if (daisychain > 0 && std::regex_match(key, matches, prefixRegex)) {
-        if (matches.str(1) == std::to_string(daisychain)) {
-            // We have a "device.<id>.<property>" property, map it to either device.<property> or <property>.
-            if (mapping.find("device." + matches.str(2)) != mapping.end()) {
-                transformedKey = "device." + matches.str(2);
+    log_trace("%s: Looking for key %s (index %i)", __func__, key.c_str(), index);
+
+    // Daisy-chained or indexed sensor special case, need to fold it back into conventional case.
+    if (index > 0 && std::regex_match(key, matches, prefixRegex)) {
+        log_trace("performSingleMapping: match1 = %s, match2 = %s, match3 = %s", matches.str(1).c_str(), matches.str(2).c_str(), matches.str(3).c_str());
+        if (matches.str(2) == std::to_string(index)) {
+            log_trace("%s: key %s (index %i) 1-> found and test %s", __func__, key.c_str(), index, matches.str(1) + "." + matches.str(3));
+            // We have a "{device,ambient}.<id>.<property>" property, map it to either device.<property> or ambient.<property> or <property> (for device only)
+            if (mapping.find(matches.str(1) + "." + matches.str(3)) != mapping.end()) {
+                transformedKey = matches.str(1) + "." + matches.str(3);
+                //log_trace("%s: key %s (index %i) -> %s", __func__, key.c_str(), index, transformedKey.c_str());
             }
             else {
-                transformedKey = matches.str(2);
+                if (matches.str(1) != "ambient") {
+                    transformedKey = matches.str(3);
+                    //log_trace("%s: key %s (index %i) -> %s", __func__, key.c_str(), index, transformedKey.c_str());
+                }
             }
         }
         else {
-            // Not the daisy-chained index we're looking for.
+            // Not the daisy-chained or sensor index we're looking for.
             transformedKey = "";
         }
     }
@@ -64,20 +77,23 @@ static std::string performSingleMapping(const KeyValues &mapping, const std::str
     return mappedKey == mapping.cend() ? "" : mappedKey->second;
 }
 
-KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int daisychain)
+KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int index)
 {
-    const static std::regex overrideRegex(R"xxx(device\.([^[:digit:]].*))xxx", std::regex::optimize);
-    const std::string strDaisychain = std::to_string(daisychain);
+    const static std::regex overrideRegex(R"xxx((device|ambient)\.([^[:digit:]].*))xxx", std::regex::optimize);
+    const std::string strIndex = std::to_string(index);
 
     KeyValues mappedValues;
 
     for (auto value : values) {
-        const std::string mappedKey = performSingleMapping(mapping, value.first, daisychain);
+        const std::string mappedKey = performSingleMapping(mapping, value.first, index);
+
+        log_trace("%s: got mappedKey '%s'", __func__, mappedKey.c_str());
 
         // Let daisy-chained device data override host device data (device.<id>.<property> => device.<property> or <property>).
         std::smatch matches;
-        if (daisychain > 0 && std::regex_match(value.first, matches, overrideRegex)) {
-            if (values.count("device." + strDaisychain + "." + matches.str(1))) {
+        if (index > 0 && std::regex_match(value.first, matches, overrideRegex)) {
+            log_trace("performMapping: match1 = %s, match2 = %s, match3 = %s", matches.str(1).c_str(), matches.str(2).c_str(), matches.str(3).c_str());
+            if (values.count(matches.str(1) + "." + strIndex + "." + matches.str(2))) {
                 log_trace("Ignoring overriden property '%s' during mapping (daisy-chain override).", value.first.c_str());
                 continue;
             }
@@ -145,17 +161,22 @@ KeyValues loadMapping(const std::string &file, const std::string &type)
 
             auto x = name.find("#");
             auto y = value.find("#");
-            if (x == std::string::npos || y == std::string::npos) {
+            // normal mapping means no index in the source AND dest
+            if (x == std::string::npos && y == std::string::npos) {
+            // if (x == std::string::npos || y == std::string::npos) {
                 // Normal mapping, insert it.
                 result.emplace(std::make_pair(name, value));
             }
             else {
+                // either (src AND dest) have index or just src (as with ambient)
                 // Template mapping, instanciate it.
                 for (int i = 1; i < 99; i++) {
                     std::string instanceName = name;
                     std::string instanceValue = value;
-                    instanceName.replace(x, 1, std::to_string(i));
-                    instanceValue.replace(y, 1, std::to_string(i));
+                    if (x != std::string::npos)
+                        instanceName.replace(x, 1, std::to_string(i));
+                    if (y != std::string::npos)
+                        instanceValue.replace(y, 1, std::to_string(i));
                     result.emplace(std::make_pair(instanceName, instanceValue));
                 }
             }
