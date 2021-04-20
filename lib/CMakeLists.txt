@@ -13,11 +13,9 @@ etn_target(shared ${PROJECT_NAME}
     PUBLIC_HEADERS
         *.h
     USES
-        czmq
+        protobuf
         cxxtools
         tntdb
-        fty_proto
-        fty_common
         fty_common_mlm
         fty_common_logging
         fty_security_wallet
@@ -34,18 +32,15 @@ if (BUILD_TESTING)
             include_public
         PREPROCESSOR -DCATCH_CONFIG_FAST_COMPILE
         USES
-            czmq
+            protobuf
             cxxtools
             tntdb
-            fty_proto
-            fty_common
             fty_common_mlm
             fty_common_logging
             fty_security_wallet
             Catch2::Catch2
             stdc++fs
             log4cplus
-            protobuf
             mlm
             openssl
             fty_common_dto
