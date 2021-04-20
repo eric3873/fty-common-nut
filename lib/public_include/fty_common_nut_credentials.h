@@ -1,5 +1,5 @@
 /*  =========================================================================
-    fty_common_nut_dump - class description
+    fty_common_nut_credentials - class description
 
     Copyright (C) 2014 - 2020 Eaton
 
@@ -21,37 +21,27 @@
 
 /*
 @header
-    fty_common_nut_dump -
+    fty_common_nut_credentials -
 @discuss
 @end
 */
 
-#ifndef FTY_COMMON_NUT_DUMP_H_INCLUDED
-#define FTY_COMMON_NUT_DUMP_H_INCLUDED
+#ifndef FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
+#define FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
 
-#include "fty_common_nut_library.h"
+#include <fty_security_wallet.h>
 
 namespace fty {
 namespace nut {
 
 /**
- * \brief Helper method to dump NUT data from a device.
- * \param driver Driver to use.
- * \param port Device to scan.
- * \param loopNb Number of acquisition loops to perform.
- * \param loopIterTime Max time per acquisition loop.
- * \param documents Security documents to use.
- * \param extra Extra parameters to pass to driver.
- * \return Map of key/value data returned by driver.
+ * \brief Convert 42ity security wallet document to NUT configuration.
+ * \param doc Document to configure driver with.
+ * \param driver Driver to configure document with.
+ * \return NUT configuration values
+ * \throw std::runtime_error if the document can't be converted with this driver.
  */
-KeyValues dumpDevice(
-    const std::string& driver,
-    const std::string& port,
-    unsigned loopNb,
-    unsigned loopIterTime,
-    const std::vector<secw::DocumentPtr>& documents = {},
-    const KeyValues& extra = {}
-);
+KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std::string& driver);
 
 }
 }

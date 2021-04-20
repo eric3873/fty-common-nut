@@ -1,5 +1,5 @@
 /*  =========================================================================
-    fty_common_nut_parse - class description
+    fty_common_nut_utils_private - class description
 
     Copyright (C) 2014 - 2020 Eaton
 
@@ -19,32 +19,23 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_parse -
-@discuss
-@end
-*/
+#ifndef FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
+#define FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
 
-#ifndef FTY_COMMON_NUT_PARSE_H_INCLUDED
-#define FTY_COMMON_NUT_PARSE_H_INCLUDED
-
-#include "fty_common_nut_library.h"
+#include "fty_common_nut_classes.h"
 
 namespace fty {
 namespace nut {
+namespace priv {
 
-DeviceConfigurations parseConfigurationFile(const std::string& in);
-DeviceConfigurations parseScannerOutput(const std::string& in);
-KeyValues parseDumpOutput(const std::string& in);
+int runCommand(
+    const MlmSubprocess::Argv& args,
+    std::string& stdout,
+    std::string& stderr,
+    int timeout);
 
 }
 }
-
-std::ostream& operator<<(std::ostream &out, const fty::nut::DeviceConfiguration &cfg);
-
-//  Self test of this class
-
-void fty_common_nut_parse_test(bool verbose);
+}
 
 #endif

@@ -201,14 +201,16 @@ KeyValues loadMapping(const std::string &file, const std::string &type)
 
 void fty_common_nut_convert_test(bool verbose)
 {
+    #define SELFTEST_RO "selftest-ro"
+
     std::cout << " * fty_common_nut_convert: ";
 
     const static std::vector<std::pair<std::string, std::string>> invalidTestCases = {
-        { "src/selftest-ro/nosuchfile.conf", "noSuchMapping" },
-        { "src/selftest-ro/mappingInvalid.conf", "noSuchMapping" },
-        { "src/selftest-ro/mappingValid.conf", "noSuchMapping" },
-        { "src/selftest-ro/mappingValid.conf", "emptyMapping" },
-        { "src/selftest-ro/mappingValid.conf", "badMapping" }
+        { SELFTEST_RO "/nosuchfile.conf", "noSuchMapping" },
+        { SELFTEST_RO "/mappingInvalid.conf", "noSuchMapping" },
+        { SELFTEST_RO "/mappingValid.conf", "noSuchMapping" },
+        { SELFTEST_RO "/mappingValid.conf", "emptyMapping" },
+        { SELFTEST_RO "/mappingValid.conf", "badMapping" }
     } ;
 
     // Test invalid mapping cases.
@@ -224,8 +226,8 @@ void fty_common_nut_convert_test(bool verbose)
     }
 
     // Test valid mapping cases.
-    const auto physicsMapping = fty::nut::loadMapping("src/selftest-ro/mappingValid.conf", "physicsMapping");
-    const auto inventoryMapping = fty::nut::loadMapping("src/selftest-ro/mappingValid.conf", "inventoryMapping");
+    const auto physicsMapping = fty::nut::loadMapping(SELFTEST_RO "/mappingValid.conf", "physicsMapping");
+    const auto inventoryMapping = fty::nut::loadMapping(SELFTEST_RO "/mappingValid.conf", "inventoryMapping");
     assert(!physicsMapping.empty());
     assert(!inventoryMapping.empty());
 

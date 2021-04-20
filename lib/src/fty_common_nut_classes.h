@@ -1,5 +1,5 @@
 /*  =========================================================================
-    fty_common_nut_credentials - class description
+    fty_common_nut_classes - private header file
 
     Copyright (C) 2014 - 2020 Eaton
 
@@ -19,31 +19,17 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_credentials -
-@discuss
-@end
-*/
+#ifndef FTY_COMMON_NUT_CLASSES_H_INCLUDED
+#define FTY_COMMON_NUT_CLASSES_H_INCLUDED
 
-#ifndef FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
-#define FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
+//  External API
+#include "../public_include/fty_common_nut.h"
 
-#include "fty_common_nut_library.h"
+//  Internal API
+#include "fty_common_nut_utils_private.h"
 
-namespace fty {
-namespace nut {
-
-/**
- * \brief Convert 42ity security wallet document to NUT configuration.
- * \param doc Document to configure driver with.
- * \param driver Driver to configure document with.
- * \return NUT configuration values
- * \throw std::runtime_error if the document can't be converted with this driver.
- */
-KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std::string& driver);
-
-}
-}
+//  Classes Selftests
+void fty_common_nut_parse_test(bool verbose);
+void fty_common_nut_convert_test(bool verbose);
 
 #endif

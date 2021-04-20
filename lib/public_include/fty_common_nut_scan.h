@@ -29,7 +29,7 @@
 #ifndef FTY_COMMON_NUT_SCAN_H_INCLUDED
 #define FTY_COMMON_NUT_SCAN_H_INCLUDED
 
-#include "fty_common_nut_library.h"
+#include <fty_security_wallet.h>
 
 namespace fty {
 namespace nut {
