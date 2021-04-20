@@ -22,8 +22,6 @@
 #ifndef FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
 #define FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
 
-#include "fty_common_nut_classes.h"
-
 namespace fty {
 namespace nut {
 namespace priv {

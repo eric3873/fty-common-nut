@@ -23,11 +23,9 @@
 #define FTY_COMMON_NUT_H_H_INCLUDED
 
 //  External dependencies
-#include <czmq.h>
 #include <cxxtools/allocator.h>
 #include <tntdb.h>
 #include <fty_log.h>
-#include <fty_common.h>
 #include <fty_common_mlm.h>
 #include <fty_security_wallet.h>
 
