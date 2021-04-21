@@ -16,6 +16,7 @@ etn_target(shared ${PROJECT_NAME}
         protobuf
         cxxtools
         tntdb
+        fty_common
         fty_common_mlm
         fty_common_logging
         fty_security_wallet
@@ -35,6 +36,7 @@ if (BUILD_TESTING)
             protobuf
             cxxtools
             tntdb
+            fty_common
             fty_common_mlm
             fty_common_logging
             fty_security_wallet

@@ -26,8 +26,11 @@
 #include <cxxtools/allocator.h>
 #include <tntdb.h>
 #include <fty_log.h>
+#include <fty_common.h> //libfty-common::fty_common_nut_types.h
 #include <fty_common_mlm.h>
 #include <fty_security_wallet.h>
+
+#ifndef FTY_COMMON_NUT_VERSION
 
 //  FTY_COMMON_NUT version macros for compile-time API detection
 #define FTY_COMMON_NUT_VERSION_MAJOR 1
@@ -39,6 +42,8 @@
 
 #define FTY_COMMON_NUT_VERSION \
     FTY_COMMON_NUT_MAKE_VERSION(FTY_COMMON_NUT_VERSION_MAJOR, FTY_COMMON_NUT_VERSION_MINOR, FTY_COMMON_NUT_VERSION_PATCH)
+
+#endif //FTY_COMMON_NUT_VERSION
 
 //  Public classes
 #include "fty_common_nut_credentials.h"
