@@ -1,4 +1,2 @@
 usr/include/*
-usr/lib/*/libfty_common_nut.so
-usr/share/fty-common-nut/mapping.conf
 usr/lib/*/pkgconfig/libfty_common_nut.pc
