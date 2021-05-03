@@ -1,3 +1,4 @@
 usr/include/*
 usr/share/cmake/*
 usr/lib/*/pkgconfig/*
+usr/lib/*/libfty_common_nut.so
