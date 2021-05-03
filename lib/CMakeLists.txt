@@ -22,6 +22,8 @@ etn_target(shared ${PROJECT_NAME}
         fty_security_wallet
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+
 if (BUILD_TESTING)
 
     etn_test(${PROJECT_NAME}-test
