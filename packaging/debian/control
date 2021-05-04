@@ -17,21 +17,22 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-Source:         fty-common-nut
-Section:        net
-Priority:       optional
-Maintainer:     fty-common-nut Developers <eatonipcopensource@eaton.com>
+Source: fty-common-nut
+Section: net
+Priority: optional
+Maintainer: fty-common-nut Developers <eatonipcopensource@eaton.com>
 Standards-Version: 4.0.1.0
 Build-Depends: debhelper (>= 9),
+    cmake (>=3.0),
+    fty-cmake-dev,
     pkg-config,
-    libsodium-dev,
-    libzmq3-dev,
-    libczmq-dev (>= 3.0.2),
+    libprotobuf-dev,
     libcxxtools-dev,
     libtntdb-dev,
     libfty-common-dev,
+    libfty-common-mlm-dev,
+    libfty-common-logging-dev,
     libfty-security-wallet-dev,
-    gcc (>= 4.9.0), g++ (>= 4.9.0),
     asciidoc-base | asciidoc, xmlto,
     dh-autoreconf
 
@@ -47,25 +48,7 @@ Architecture: any
 Section: libdevel
 Depends:
     ${misc:Depends},
-    libsodium-dev,
-    libzmq3-dev,
-    libczmq-dev (>= 3.0.2),
-    libcxxtools-dev,
-    libtntdb-dev,
-    libfty-common-dev,
-    libfty-security-wallet-dev,
     libfty-common-nut1 (= ${binary:Version})
 Description: fty-common-nut development tools
  This package contains development files for fty-common-nut:
  provides common nut tools for agents
-
-Package: fty-common-nut-dbg
-Architecture: any
-Section: debug
-Priority: optional
-Depends:
-    libfty-common-nut1 (= ${binary:Version}),
-    ${misc:Depends}
-Description: fty-common-nut debugging symbols
- This package contains the debugging symbols for fty-common-nut:
- provides common nut tools for agents.

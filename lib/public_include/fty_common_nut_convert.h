@@ -1,5 +1,5 @@
 /*  =========================================================================
-    fty_common_nut_utils_private - class description
+    fty_common_nut_convert - class description
 
     Copyright (C) 2014 - 2020 Eaton
 
@@ -19,22 +19,15 @@
     =========================================================================
 */
 
-#ifndef FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
-#define FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
-
-#include "fty_common_nut_library.h"
+#ifndef FTY_COMMON_NUT_CONVERT_H_INCLUDED
+#define FTY_COMMON_NUT_CONVERT_H_INCLUDED
 
 namespace fty {
 namespace nut {
-namespace priv {
 
-int runCommand(
-    const MlmSubprocess::Argv& args,
-    std::string& stdout,
-    std::string& stderr,
-    int timeout);
+KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int daisychain);
+KeyValues loadMapping(const std::string &file, const std::string &type);
 
-}
 }
 }
 

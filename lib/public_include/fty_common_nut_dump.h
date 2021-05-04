@@ -1,5 +1,5 @@
 /*  =========================================================================
-    fty_common_nut_convert - class description
+    fty_common_nut_dump - class description
 
     Copyright (C) 2014 - 2020 Eaton
 
@@ -19,21 +19,39 @@
     =========================================================================
 */
 
-#ifndef FTY_COMMON_NUT_CONVERT_H_INCLUDED
-#define FTY_COMMON_NUT_CONVERT_H_INCLUDED
+/*
+@header
+    fty_common_nut_dump -
+@discuss
+@end
+*/
 
-#include "fty_common_nut_library.h"
+#ifndef FTY_COMMON_NUT_DUMP_H_INCLUDED
+#define FTY_COMMON_NUT_DUMP_H_INCLUDED
 
 namespace fty {
 namespace nut {
 
-KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int daisychain);
-KeyValues loadMapping(const std::string &file, const std::string &type);
+/**
+ * \brief Helper method to dump NUT data from a device.
+ * \param driver Driver to use.
+ * \param port Device to scan.
+ * \param loopNb Number of acquisition loops to perform.
+ * \param loopIterTime Max time per acquisition loop.
+ * \param documents Security documents to use.
+ * \param extra Extra parameters to pass to driver.
+ * \return Map of key/value data returned by driver.
+ */
+KeyValues dumpDevice(
+    const std::string& driver,
+    const std::string& port,
+    unsigned loopNb,
+    unsigned loopIterTime,
+    const std::vector<secw::DocumentPtr>& documents = {},
+    const KeyValues& extra = {}
+);
 
 }
 }
-
-//  Self test of this class
-void fty_common_nut_convert_test(bool verbose);
 
 #endif

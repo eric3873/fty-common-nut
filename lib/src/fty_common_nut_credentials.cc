@@ -76,7 +76,7 @@ KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std
             return output;
         }
         else {
-            throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver snmp-ups.").c_str());    
+            throw std::runtime_error((std::string("Bad security wallet document type ")+doc->getType()+" for driver snmp-ups.").c_str());
         }
     }
     else if (driver == "etn-nut-powerconnect") {
