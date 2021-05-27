@@ -26,15 +26,11 @@ Build-Depends: debhelper (>= 9),
     cmake (>=3.0),
     fty-cmake-dev,
     pkg-config,
-    libprotobuf-dev,
     libcxxtools-dev,
-    libtntdb-dev,
     libfty-common-dev,
-    libfty-common-mlm-dev,
     libfty-common-logging-dev,
     libfty-security-wallet-dev,
-    asciidoc-base | asciidoc, xmlto,
-    dh-autoreconf
+    libfty-utils-dev
 
 Package: libfty-common-nut1
 Architecture: any

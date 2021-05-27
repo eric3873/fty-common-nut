@@ -19,25 +19,15 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_credentials -
-@discuss
-@end
-*/
+#include "fty_common_nut_dump.h"
+#include "fty_common_nut_credentials.h"
+#include "fty_common_nut_parse.h"
+#include "fty_common_nut_utils_private.h"
 
-#include "fty_common_nut_classes.h"
+namespace fty::nut {
 
-namespace fty {
-namespace nut {
-
-KeyValues dumpDevice(
-    const std::string& driver,
-    const std::string& port,
-    unsigned loopNb,
-    unsigned loopIterTime,
-    const std::vector<secw::DocumentPtr>& documents,
-    const KeyValues& extra)
+KeyValues dumpDevice(const std::string& driver, const std::string& port, unsigned loopNb, unsigned loopIterTime,
+    const std::vector<secw::DocumentPtr>& documents, const KeyValues& extra)
 {
     // Build list of parameters.
     KeyValues data = extra;
@@ -48,23 +38,18 @@ KeyValues dumpDevice(
     data.emplace("port", port);
 
     // Build command invocation.
-    std::string stdout, stderr;
-    MlmSubprocess::Argv args {
-        "/lib/nut/"+driver,
-        "-d", std::to_string(loopNb),
-        "-u", "root",
-        "-s", std::string("dumpdata-") + std::to_string(rand() % 100000 + 1)
-    } ;
+    Process::Arguments args = {"-d", std::to_string(loopNb), "-u", "root", "-s",
+        std::string("dumpdata-") + std::to_string(rand() % 100000 + 1)};
 
     for (const auto& it : data) {
         args.emplace_back("-x");
-        args.emplace_back(it.first+"="+it.second);
+        args.emplace_back(it.first + "=" + it.second);
     }
 
     // Invoke command.
-    (void)priv::runCommand(args, stdout, stderr, loopNb*loopIterTime);
+    std::string stdout, stderr;
+    priv::runCommand("/lib/nut/" + driver, args, stdout, stderr, int(loopNb * loopIterTime));
     return parseDumpOutput(stdout);
 }
 
-}
-}
+} // namespace fty::nut

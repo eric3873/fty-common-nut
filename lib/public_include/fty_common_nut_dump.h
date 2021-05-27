@@ -19,39 +19,21 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_dump -
-@discuss
-@end
-*/
+#pragma once
+#include <fty_common_nut_types.h>
+#include <fty_security_wallet.h>
 
-#ifndef FTY_COMMON_NUT_DUMP_H_INCLUDED
-#define FTY_COMMON_NUT_DUMP_H_INCLUDED
+namespace fty::nut {
 
-namespace fty {
-namespace nut {
+/// @brief Helper method to dump NUT data from a device.
+/// @param driver Driver to use.
+/// @param port Device to scan.
+/// @param loopNb Number of acquisition loops to perform.
+/// @param loopIterTime Max time per acquisition loop.
+/// @param documents Security documents to use.
+/// @param extra Extra parameters to pass to driver.
+/// @return Map of key/value data returned by driver.
+KeyValues dumpDevice(const std::string& driver, const std::string& port, unsigned loopNb, unsigned loopIterTime,
+    const std::vector<secw::DocumentPtr>& documents = {}, const KeyValues& extra = {});
 
-/**
- * \brief Helper method to dump NUT data from a device.
- * \param driver Driver to use.
- * \param port Device to scan.
- * \param loopNb Number of acquisition loops to perform.
- * \param loopIterTime Max time per acquisition loop.
- * \param documents Security documents to use.
- * \param extra Extra parameters to pass to driver.
- * \return Map of key/value data returned by driver.
- */
-KeyValues dumpDevice(
-    const std::string& driver,
-    const std::string& port,
-    unsigned loopNb,
-    unsigned loopIterTime,
-    const std::vector<secw::DocumentPtr>& documents = {},
-    const KeyValues& extra = {}
-);
-
-}
-}
-
-#endif
+} // namespace fty::nut

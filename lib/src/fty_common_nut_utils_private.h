@@ -19,21 +19,12 @@
     =========================================================================
 */
 
-#ifndef FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
-#define FTY_COMMON_NUT_UTILS_PRIVATE_H_INCLUDED
+#pragma once
+#include <fty/process.h>
 
-namespace fty {
-namespace nut {
-namespace priv {
+namespace fty::nut::priv {
 
 int runCommand(
-    const MlmSubprocess::Argv& args,
-    std::string& stdout,
-    std::string& stderr,
-    int timeout);
+    const std::string& cmd, const Process::Arguments& args, std::string& stdout, std::string& stderr, int timeout);
 
 }
-}
-}
-
-#endif

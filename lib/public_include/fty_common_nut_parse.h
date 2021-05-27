@@ -19,26 +19,15 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_parse -
-@discuss
-@end
-*/
+#pragma once
+#include <fty_common_nut_types.h>
 
-#ifndef FTY_COMMON_NUT_PARSE_H_INCLUDED
-#define FTY_COMMON_NUT_PARSE_H_INCLUDED
-
-namespace fty {
-namespace nut {
+namespace fty::nut {
 
 DeviceConfigurations parseConfigurationFile(const std::string& in);
 DeviceConfigurations parseScannerOutput(const std::string& in);
-KeyValues parseDumpOutput(const std::string& in);
+KeyValues            parseDumpOutput(const std::string& in);
 
-}
-}
+} // namespace fty::nut
 
-std::ostream& operator<<(std::ostream &out, const fty::nut::DeviceConfiguration &cfg);
-
-#endif
+std::ostream& operator<<(std::ostream& out, const fty::nut::DeviceConfiguration& cfg);

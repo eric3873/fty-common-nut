@@ -14,42 +14,5 @@
     ========================================================================
 */
 
-#define CATCH_CONFIG_MAIN // This tells Catch to provide a main() - only do this in one cpp file
+#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-
-#include "../src/fty_common_nut_classes.h"
-#include <filesystem>
-
-typedef struct {
-    const char *testname;           // test name, can be called from command line this way
-    void (*test) (bool);            // function to run the test (or NULL for private tests)
-} test_item_t;
-
-static test_item_t
-all_tests [] = {
-    { "fty_common_nut_convert", fty_common_nut_convert_test },
-    { "fty_common_nut_parse", fty_common_nut_parse_test },
-    {NULL, NULL}          //  Sentinel
-};
-
-//  -------------------------------------------------------------------------
-//  Run all tests.
-//
-
-static void
-test_runall (bool verbose)
-{
-    printf ("Running fty-proto selftests...\n");
-    test_item_t *item;
-    for (item = all_tests; item->testname; item++) {
-        if (item->test)
-            item->test (verbose);
-    }
-    printf ("Tests passed OK\n");
-}
-
-TEST_CASE("All the stuff of before")
-{
-    std::cout << "Current path is " << std::filesystem::current_path() << std::endl;
-    test_runall(true);
-}
