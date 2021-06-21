@@ -19,24 +19,13 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_utils_private -
-@discuss
-@end
-*/
+#include "fty_common_nut_utils_private.h"
+#include <fty_log.h>
 
-#include "fty_common_nut_classes.h"
-
-namespace fty {
-namespace nut {
-namespace priv {
+namespace fty::nut::priv {
 
 int runCommand(
-    const MlmSubprocess::Argv& args,
-    std::string& stdout,
-    std::string& stderr,
-    int timeout)
+    const std::string& cmd, const Process::Arguments& args, std::string& stdout, std::string& stderr, int timeout)
 {
     std::stringstream fullCommand;
     for (const auto& i : args) {
@@ -45,7 +34,20 @@ int runCommand(
     std::string fullCommandStr = fullCommand.str();
     log_info("Running command %s(with %d seconds timeout)...", fullCommandStr.c_str(), timeout);
 
-    int ret = MlmSubprocess::output(args, stdout, stderr, timeout);
+    Process proc(cmd, args, Capture::Out | Capture::Err);
+    if (auto pid = proc.run(); !pid) {
+        log_error(pid.error().c_str());
+        return -1;
+    }
+
+    auto ret = proc.wait(timeout);
+    if (!ret) {
+        log_error(ret.error().c_str());
+        return -1;
+    }
+
+    stdout = proc.readAllStandardOutput();
+    stderr = proc.readAllStandardError();
 
     if (!stdout.empty()) {
         log_trace("Standard output:\n%s", stdout.c_str());
@@ -54,16 +56,13 @@ int runCommand(
         log_trace("Standard error:\n%s", stderr.c_str());
     }
 
-    if (ret == 0) {
+    if (*ret == 0) {
         log_info("Execution of command %ssucceeded.", fullCommandStr.c_str());
-    }
-    else {
-        log_error("Execution of command %sfailed with code %d.", fullCommandStr.c_str(), ret);
+    } else {
+        log_error("Execution of command %sfailed with code %d.", fullCommandStr.c_str(), *ret);
     }
 
-    return ret;
+    return *ret;
 }
 
-}
-}
-}
+} // namespace fty::nut::priv

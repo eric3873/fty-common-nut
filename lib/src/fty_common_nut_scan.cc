@@ -19,55 +19,36 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_scan -
-@discuss
-@end
-*/
+#include "fty_common_nut_scan.h"
+#include "fty_common_nut_credentials.h"
+#include "fty_common_nut_utils_private.h"
+#include "fty_common_nut_parse.h"
 
-#include "fty_common_nut_classes.h"
+namespace fty::nut {
 
-namespace fty {
-namespace nut {
-
-static std::map<ScanProtocol, std::string> s_scanProtocols {
-    { SCAN_PROTOCOL_NETXML,     "--xml_scan" },
-    { SCAN_PROTOCOL_SNMP,       "--snmp_scan" },
-    { SCAN_PROTOCOL_SNMP_DMF,   "--snmp_scan_dmf" },
+static std::map<ScanProtocol, std::string> s_scanProtocols{
+    {SCAN_PROTOCOL_NETXML, "--xml_scan"},
+    {SCAN_PROTOCOL_SNMP, "--snmp_scan"},
+    {SCAN_PROTOCOL_SNMP_DMF, "--snmp_scan_dmf"},
 };
 
-static std::map<ScanProtocol, std::string> s_driverProtocols {
-    { SCAN_PROTOCOL_NETXML,     "netxml-ups" },
-    { SCAN_PROTOCOL_SNMP,       "snmp-ups" },
-    { SCAN_PROTOCOL_SNMP_DMF,   "snmp-ups" },
+static std::map<ScanProtocol, std::string> s_driverProtocols{
+    {SCAN_PROTOCOL_NETXML, "netxml-ups"},
+    {SCAN_PROTOCOL_SNMP, "snmp-ups"},
+    {SCAN_PROTOCOL_SNMP_DMF, "snmp-ups"},
 };
 
 
-DeviceConfigurations scanDevice(
-    ScanProtocol protocol,
-    std::string ipAddress,
-    unsigned timeout,
+DeviceConfigurations scanDevice(ScanProtocol protocol, const std::string& ipAddress, unsigned timeout,
     const std::vector<secw::DocumentPtr>& documents)
 {
     return scanRangeDevices(protocol, ipAddress, ipAddress, timeout, documents);
 }
 
-DeviceConfigurations scanRangeDevices(
-    ScanProtocol protocol,
-    std::string ipAddressStart,
-    std::string ipAddressEnd,
-    unsigned timeout,
-    const std::vector<secw::DocumentPtr>& documents)
+DeviceConfigurations scanRangeDevices(ScanProtocol protocol, std::string ipAddressStart, std::string ipAddressEnd,
+    unsigned timeout, const std::vector<secw::DocumentPtr>& documents)
 {
-    std::string stdout, stderr;
-    MlmSubprocess::Argv args {
-        "nut-scanner",
-        "--quiet",
-        "--disp_parsable",
-        s_scanProtocols.at(protocol),
-        "--start_ip", ipAddressStart
-    };
+    Process::Arguments args{"--quiet", "--disp_parsable", s_scanProtocols.at(protocol), "--start_ip", ipAddressStart};
 
     if (ipAddressStart != ipAddressEnd) {
         args.emplace_back("--end_ip");
@@ -75,12 +56,8 @@ DeviceConfigurations scanRangeDevices(
     }
 
     std::vector<KeyValues> documentParameters;
-    std::transform(
-        documents.begin(),
-        documents.end(),
-        std::back_inserter(documentParameters),
-        std::bind(convertSecwDocumentToKeyValues, std::placeholders::_1, s_driverProtocols.at(protocol))
-    );
+    std::transform(documents.begin(), documents.end(), std::back_inserter(documentParameters),
+        std::bind(convertSecwDocumentToKeyValues, std::placeholders::_1, s_driverProtocols.at(protocol)));
 
     for (auto& documentParameter : documentParameters) {
         // Remove SnmpV3's "snmp_version" from list of arguments.
@@ -95,10 +72,10 @@ DeviceConfigurations scanRangeDevices(
         }
     }
 
-    (void)priv::runCommand(args, stdout, stderr, timeout);
+    std::string stdout, stderr;
+    priv::runCommand("nut-scanner", args, stdout, stderr, int(timeout));
 
     return parseScannerOutput(stdout);
 }
 
-}
-}
+} // namespace fty::nut

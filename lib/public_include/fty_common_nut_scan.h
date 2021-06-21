@@ -19,20 +19,12 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_scan -
-@discuss
-@end
-*/
+#pragma once
 
-#ifndef FTY_COMMON_NUT_SCAN_H_INCLUDED
-#define FTY_COMMON_NUT_SCAN_H_INCLUDED
-
+#include <fty_common_nut_types.h>
 #include <fty_security_wallet.h>
 
-namespace fty {
-namespace nut {
+namespace fty::nut {
 
 enum ScanProtocol
 {
@@ -41,39 +33,23 @@ enum ScanProtocol
     SCAN_PROTOCOL_SNMP_DMF
 };
 
-/**
- * \brief Scan for NUT driver configurations on an IP address.
- * \param protocol Protocol to scan for.
- * \param idAddress IP address to scan.
- * \param timeout Timeout of scan, in seconds.
- * \param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
- * \return List of device configurations found.
- */
-DeviceConfigurations scanDevice(
-    ScanProtocol protocol,
-    std::string ipAddress,
-    unsigned timeout,
-    const std::vector<secw::DocumentPtr>& documents = {}
-);
+/// @brief Scan for NUT driver configurations on an IP address.
+/// @param protocol Protocol to scan for.
+/// @param idAddress IP address to scan.
+/// @param timeout Timeout of scan, in seconds.
+/// @param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
+/// @return List of device configurations found.
+DeviceConfigurations scanDevice(ScanProtocol protocol, const std::string& ipAddress, unsigned timeout,
+    const std::vector<secw::DocumentPtr>& documents = {});
 
-/**
- * \brief Scan for NUT configurations on an IP address range.
- * \param protocol Protocol to scan for.
- * \param idAddressStart First IP address to scan.
- * \param idAddressEnd Last IP address to scan.
- * \param timeout Timeout of scan, in seconds.
- * \param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
- * \return List of device configurations found.
- */
-DeviceConfigurations scanRangeDevices(
-    ScanProtocol protocol,
-    std::string ipAddressStart,
-    std::string ipAddressEnd,
-    unsigned timeout,
-    const std::vector<secw::DocumentPtr>& documents = {}
-);
+/// @brief Scan for NUT configurations on an IP address range.
+/// @param protocol Protocol to scan for.
+/// @param idAddressStart First IP address to scan.
+/// @param idAddressEnd Last IP address to scan.
+/// @param timeout Timeout of scan, in seconds.
+/// @param documents Security wallet documents to use for scan (at most one set of credentials can be specified).
+/// @return List of device configurations found.
+DeviceConfigurations scanRangeDevices(ScanProtocol protocol, std::string ipAddressStart, std::string ipAddressEnd,
+    unsigned timeout, const std::vector<secw::DocumentPtr>& documents = {});
 
-}
-}
-
-#endif
+} // namespace fty::nut

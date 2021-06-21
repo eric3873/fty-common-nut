@@ -19,16 +19,12 @@
     =========================================================================
 */
 
-#ifndef FTY_COMMON_NUT_CONVERT_H_INCLUDED
-#define FTY_COMMON_NUT_CONVERT_H_INCLUDED
+#pragma once
+#include <fty_common_nut_types.h>
 
-namespace fty {
-namespace nut {
+namespace fty::nut {
 
-KeyValues performMapping(const KeyValues &mapping, const KeyValues &values, int daisychain);
-KeyValues loadMapping(const std::string &file, const std::string &type);
+KeyValues performMapping(const KeyValues& mapping, const KeyValues& values, int daisychain);
+KeyValues loadMapping(const std::string& file, const std::string& type);
 
-}
-}
-
-#endif
+} // namespace fty::nut

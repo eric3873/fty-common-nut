@@ -19,31 +19,18 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_common_nut_credentials -
-@discuss
-@end
-*/
+#pragma once
 
-#ifndef FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
-#define FTY_COMMON_NUT_CREDENTIALS_H_INCLUDED
-
+#include <fty_common_nut_types.h>
 #include <fty_security_wallet.h>
 
-namespace fty {
-namespace nut {
+namespace fty::nut {
 
-/**
- * \brief Convert 42ity security wallet document to NUT configuration.
- * \param doc Document to configure driver with.
- * \param driver Driver to configure document with.
- * \return NUT configuration values
- * \throw std::runtime_error if the document can't be converted with this driver.
- */
+/// @brief Convert 42ity security wallet document to NUT configuration.
+/// @param doc Document to configure driver with.
+/// @param driver Driver to configure document with.
+/// @return NUT configuration values
+/// @throw std::runtime_error if the document can't be converted with this driver.
 KeyValues convertSecwDocumentToKeyValues(const secw::DocumentPtr& doc, const std::string& driver);
 
-}
-}
-
-#endif
+} // namespace fty::nut
